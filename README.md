@@ -126,4 +126,3 @@ Please feel free to submit issues and pull requests.
 ## License
 
 MIT License. See [LICENSE](LICENSE) for more information.
-```
