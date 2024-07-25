@@ -14,5 +14,6 @@
             "email": "thomas@lindgreenit.dk"
         }
     ],
-    "require": {}
+    "require": {},
+    "minimum-stability": "stable"
 }
