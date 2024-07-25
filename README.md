@@ -1,6 +1,6 @@
-# DatabaseLib
+# Database
 
-DatabaseLib is a simple and efficient database abstraction layer built on top of PDO. It provides easy-to-use methods for common database operations like CRUD operations, transaction management, and connection pooling.
+Database is a simple and efficient database abstraction layer built on top of PDO. It provides easy-to-use methods for common database operations like CRUD operations, transaction management, and connection pooling.
 
 ## Installation
 
@@ -14,7 +14,7 @@ composer require kubricklabs/database
 
 ### Basic Usage
 
-Here's an example of how to use the DatabaseLib package:
+Here's an example of how to use the Database package:
 
 ```php
 require 'vendor/autoload.php';
