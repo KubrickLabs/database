@@ -1,6 +1,7 @@
 {
     "name": "kubricklabs/database",
     "type": "library",
+    "description": "Database package for the KubrickLabs tools collection",
     "license": "MIT",
     "autoload": {
         "psr-4": {
