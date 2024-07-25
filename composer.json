@@ -1,0 +1,17 @@
+{
+    "name": "kubricklabs/database",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Kubricklabs\\Database\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Thomas Bentsen",
+            "email": "thomas@lindgreenit.dk"
+        }
+    ],
+    "require": {}
+}
