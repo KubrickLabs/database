@@ -1,7 +1,3 @@
-Sure! Below is a sample `README.md` file for your Composer package:
-
-### `README.md`
-
 ```markdown
 # DatabaseLib
 
