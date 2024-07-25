@@ -1,4 +1,3 @@
-```markdown
 # DatabaseLib
 
 DatabaseLib is a simple and efficient database abstraction layer built on top of PDO. It provides easy-to-use methods for common database operations like CRUD operations, transaction management, and connection pooling.
