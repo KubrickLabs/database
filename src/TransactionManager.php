@@ -5,7 +5,6 @@ namespace app\database;
 use PDO;
 use PDOException;
 
-
 /**
  * Class TransactionManager
  * 
@@ -28,6 +27,7 @@ class TransactionManager {
      * Begin a transaction.
      * 
      * @return bool Success status
+     * @throws \RuntimeException if a transaction is already started.
      */
     public function beginTransaction() {
         if ($this->isTransactionStarted) {
@@ -48,6 +48,7 @@ class TransactionManager {
      * Commit a transaction.
      * 
      * @return bool Success status
+     * @throws \RuntimeException if no transaction is started.
      */
     public function commit() {
         if (!$this->isTransactionStarted) {
@@ -69,6 +70,7 @@ class TransactionManager {
      * Rollback a transaction.
      * 
      * @return bool Success status
+     * @throws \RuntimeException if no transaction is started.
      */
     public function rollBack() {
         if (!$this->isTransactionStarted) {

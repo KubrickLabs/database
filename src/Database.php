@@ -5,12 +5,40 @@ namespace app\database;
 use PDO;
 use PDOException;
 
-class Database extends PDO {
+/**
+ * Class Database
+ *
+ * Extends PDO to provide additional functionality such as CRUD operations and transaction management.
+ *
+ * @package app\database
+ */
+class Database extends PDO
+{
+    /**
+     * @var Database|null Singleton instance of the Database class.
+     */
     private static $instance = null;
+
+    /**
+     * @var CRUDOperations Instance of CRUDOperations for database operations.
+     */
     private $crud;
+
+    /**
+     * @var TransactionManager Instance of TransactionManager for transaction management.
+     */
     private $transaction;
 
-    public function __construct($dsn, $username = null, $password = null, $options = null) {
+    /**
+     * Database constructor.
+     *
+     * @param string $dsn The Data Source Name, or DSN, contains the information required to connect to the database.
+     * @param string|null $username The user name for the DSN string. This parameter is optional for some PDO drivers.
+     * @param string|null $password The password for the DSN string. This parameter is optional for some PDO drivers.
+     * @param array|null $options A key=>value array of driver-specific connection options.
+     */
+    public function __construct($dsn, $username = null, $password = null, $options = null)
+    {
         parent::__construct($dsn, $username, $password, $options);
         $this->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -18,39 +46,78 @@ class Database extends PDO {
         $this->transaction = new TransactionManager($this);
     }
 
-    // Transaction Management
-    public function beginTransaction(): bool {
+    /**
+     * Begins a transaction.
+     *
+     * @return bool Returns true on success or false on failure.
+     */
+    public function beginTransaction(): bool
+    {
         return $this->transaction->beginTransaction();
     }
 
-    public function commit(): bool {
+    /**
+     * Commits a transaction.
+     *
+     * @return bool Returns true on success or false on failure.
+     */
+    public function commit(): bool
+    {
         return $this->transaction->commit();
     }
 
-    public function rollBack(): bool {
+    /**
+     * Rolls back a transaction.
+     *
+     * @return bool Returns true on success or false on failure.
+     */
+    public function rollBack(): bool
+    {
         return $this->transaction->rollBack();
     }
 
-    // Static method to get a connection from the pool
-    public static function getInstance($dsn, $username = null, $password = null, $options = null) {
+    /**
+     * Gets the singleton instance of the Database class.
+     *
+     * @param string $dsn The Data Source Name, or DSN, contains the information required to connect to the database.
+     * @param string|null $username The user name for the DSN string. This parameter is optional for some PDO drivers.
+     * @param string|null $password The password for the DSN string. This parameter is optional for some PDO drivers.
+     * @param array|null $options A key=>value array of driver-specific connection options.
+     * @return Database|null Returns the singleton instance of the Database class.
+     */
+    public static function getInstance($dsn, $username = null, $password = null, $options = null)
+    {
         if (self::$instance === null) {
             self::$instance = ConnectionPool::getConnection($dsn, $username, $password, $options);
         }
         return self::$instance;
     }
 
-    // Getter for CRUDOperations
-    public function getCrud() {
+    /**
+     * Gets the CRUDOperations instance.
+     *
+     * @return CRUDOperations Returns the CRUDOperations instance.
+     */
+    public function getCrud()
+    {
         return $this->crud;
     }
 
-    // Setter for CRUDOperations
-    public function setCrud($crud) {
+    /**
+     * Sets the CRUDOperations instance.
+     *
+     * @param CRUDOperations $crud The CRUDOperations instance.
+     */
+    public function setCrud($crud)
+    {
         $this->crud = $crud;
     }
 
-    // Destructor to release the connection
-    public function __destruct() {
+    /**
+     * Destructor to release the connection.
+     */
+    public function __destruct()
+    {
         ConnectionPool::releaseConnection($this);
     }
 }
