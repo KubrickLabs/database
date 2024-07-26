@@ -5,30 +5,16 @@ namespace app\database;
 use PDO;
 use PDOException;
 
-/**
- * Class TransactionManager
- * 
- * Manages database transactions.
- */
 class TransactionManager {
     private $connection;
     private $isTransactionStarted = false;
 
-    /**
-     * TransactionManager constructor.
-     * 
-     * @param PDO $connection
-     */
+    // Dependency Injection via Constructor
     public function __construct(PDO $connection) {
         $this->connection = $connection;
     }
 
-    /**
-     * Begin a transaction.
-     * 
-     * @return bool Success status
-     */
-    public function beginTransaction() {
+    public function beginTransaction(): bool {
         if ($this->isTransactionStarted) {
             throw new \RuntimeException('Transaction already started.');
         }
@@ -43,12 +29,7 @@ class TransactionManager {
         }
     }
 
-    /**
-     * Commit a transaction.
-     * 
-     * @return bool Success status
-     */
-    public function commit() {
+    public function commit(): bool {
         if (!$this->isTransactionStarted) {
             throw new \RuntimeException('No transaction started.');
         }
@@ -64,12 +45,7 @@ class TransactionManager {
         }
     }
 
-    /**
-     * Rollback a transaction.
-     * 
-     * @return bool Success status
-     */
-    public function rollBack() {
+    public function rollBack(): bool {
         if (!$this->isTransactionStarted) {
             throw new \RuntimeException('No transaction started.');
         }

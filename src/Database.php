@@ -5,54 +5,18 @@ namespace app\database;
 use PDO;
 use PDOException;
 
-/**
- * Class Database
- * 
- * Extends PDO to provide additional functionality such as CRUD operations
- * and transaction management, along with connection pooling.
- */
 class Database extends PDO {
     private static $instance = null;
     private $crud;
     private $transaction;
 
-    /**
-     * Database constructor.
-     * 
-     * @param string $dsn Data Source Name
-     * @param string|null $username Database username
-     * @param string|null $password Database password
-     * @param array|null $options PDO options
-     */
-    private function __construct($dsn, $username = null, $password = null, $options = null) {
+    // Dependency Injection via Constructor
+    private function __construct(CRUDOperations $crud, TransactionManager $transaction, $dsn, $username = null, $password = null, $options = null) {
         parent::__construct($dsn, $username, $password, $options);
         $this->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $this->crud = new CRUDOperations($this);
-        $this->transaction = new TransactionManager($this);
-    }
-
-    /**
-     * Get the singleton instance of Database.
-     * 
-     * @param string $dsn Data Source Name
-     * @param string|null $username Database username
-     * @param string|null $password Database password
-     * @param array|null $options PDO options
-     * @return Database
-     */
-    public static function getInstance($dsn, $username = null, $password = null, $options = null) {
-        if (self::$instance === null) {
-            self::$instance = ConnectionPool::getConnection($dsn, $username, $password, $options);
-        }
-        return self::$instance;
-    }
-
-    /**
-     * Release the connection back to the pool on destruction.
-     */
-    public function __destruct() {
-        ConnectionPool::releaseConnection($this);
+        $this->crud = $crud;
+        $this->transaction = $transaction;
     }
 
     // CRUD Operations
@@ -83,5 +47,22 @@ class Database extends PDO {
 
     public function rollBack(): bool {
         return $this->transaction->rollBack();
+    }
+
+    // Static method to get a connection from the pool
+    public static function getInstance($dsn, $username = null, $password = null, $options = null): self {
+        if (self::$instance === null) {
+            // Create a new PDO instance
+            $pdo = new PDO($dsn, $username, $password, $options);
+            $crud = new CRUDOperations($pdo);
+            $transaction = new TransactionManager($pdo);
+            self::$instance = new self($crud, $transaction, $dsn, $username, $password, $options);
+        }
+        return self::$instance;
+    }
+
+    // Destructor to release the connection
+    public function __destruct() {
+        ConnectionPool::releaseConnection($this);
     }
 }
