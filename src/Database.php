@@ -10,30 +10,12 @@ class Database extends PDO {
     private $crud;
     private $transaction;
 
-    // Dependency Injection via Constructor
-    private function __construct(CRUDOperations $crud, TransactionManager $transaction, $dsn, $username = null, $password = null, $options = null) {
+    public function __construct($dsn, $username = null, $password = null, $options = null) {
         parent::__construct($dsn, $username, $password, $options);
         $this->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $this->crud = $crud;
-        $this->transaction = $transaction;
-    }
-
-    // CRUD Operations
-    public function select($query, $params = [], $fetchMode = PDO::FETCH_ASSOC) {
-        return $this->crud->select($query, $params, $fetchMode);
-    }
-
-    public function insert($table, $data) {
-        return $this->crud->insert($table, $data);
-    }
-
-    public function update($table, $data, $where) {
-        return $this->crud->update($table, $data, $where);
-    }
-
-    public function delete($table, $where) {
-        return $this->crud->delete($table, $where);
+        $this->crud = new CRUDOperations($this);
+        $this->transaction = new TransactionManager($this);
     }
 
     // Transaction Management
@@ -50,15 +32,21 @@ class Database extends PDO {
     }
 
     // Static method to get a connection from the pool
-    public static function getInstance($dsn, $username = null, $password = null, $options = null): self {
+    public static function getInstance($dsn, $username = null, $password = null, $options = null) {
         if (self::$instance === null) {
-            // Create a new PDO instance
-            $pdo = new PDO($dsn, $username, $password, $options);
-            $crud = new CRUDOperations($pdo);
-            $transaction = new TransactionManager($pdo);
-            self::$instance = new self($crud, $transaction, $dsn, $username, $password, $options);
+            self::$instance = ConnectionPool::getConnection($dsn, $username, $password, $options);
         }
         return self::$instance;
+    }
+
+    // Getter for CRUDOperations
+    public function getCrud() {
+        return $this->crud;
+    }
+
+    // Setter for CRUDOperations
+    public function setCrud($crud) {
+        $this->crud = $crud;
     }
 
     // Destructor to release the connection

@@ -9,7 +9,6 @@ class CRUDOperations {
     private $connection;
     private $queryBuilder;
 
-    // Dependency Injection via Constructor
     public function __construct(PDO $connection) {
         $this->connection = $connection;
         $this->queryBuilder = new QueryBuilder();
